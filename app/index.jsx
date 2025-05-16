@@ -1,34 +1,36 @@
 import { Picker } from '@react-native-picker/picker';
 import React, { useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, } from 'react-native';
 
-const students = ['Alice', 'Ben', 'Carlos', 'Dina', 'Ella'];
+const students = ['Select Student...', 'Alice', 'Ben', 'Carlos', 'Dina', 'Ella'];
+const emojis = ['😢', '😟', '😐', '😊', '😄'];
 
 export default function MoodRatingScreen() {
   const [selectedStudent, setSelectedStudent] = useState(students[0]);
   const [mood, setMood] = useState(null);
 
-  const emojis = ['😢', '😟', '😐', '😊', '😄'];
-
   const handleSubmit = () => {
-    if (selectedStudent && mood !== null) {
-      console.log(`Student: ${selectedStudent}, Mood: ${mood + 1} (${emojis[mood]})`);
-      // You can replace this with a backend/API call
-      alert(`Submitted mood ${mood + 1} for ${selectedStudent}`);
-      setMood(null); // reset
+    if (selectedStudent !== students[0] && mood !== null) {
+      alert(`Submitted mood ${mood + 1} (${emojis[mood]}) for ${selectedStudent}`);
+      console.log(`Student: ${selectedStudent}, Mood: ${mood + 1}`);
+      setMood(null);
+      setSelectedStudent(students[0]);
+    } else {
+      alert('Please select a student and mood!');
     }
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Student Mood Rating</Text>
+      <Text style={styles.title}>🎓 Student Mood Tracker</Text>
 
-      <Text style={styles.label}>Select Student:</Text>
-      <View style={styles.pickerContainer}>
+      <Text style={styles.label}>Select Student</Text>
+      <View style={styles.pickerWrapper}>
         <Picker
           selectedValue={selectedStudent}
           onValueChange={(itemValue) => setSelectedStudent(itemValue)}
-          style={styles.picker}
+          mode="dropdown"
+          style={Platform.OS === 'android' ? styles.pickerAndroid : undefined}
         >
           {students.map((student, index) => (
             <Picker.Item label={student} value={student} key={index} />
@@ -36,27 +38,25 @@ export default function MoodRatingScreen() {
         </Picker>
       </View>
 
-      <Text style={styles.label}>Rate Mood:</Text>
+      <Text style={styles.label}>Rate student's mood overall</Text>
       <View style={styles.emojiRow}>
         {emojis.map((emoji, index) => (
           <TouchableOpacity
             key={index}
             style={[
               styles.emojiButton,
-              mood === index && styles.selectedEmoji
+              mood === index && styles.emojiSelected
             ]}
             onPress={() => setMood(index)}
           >
-            <Text style={styles.emojiText}>{emoji}</Text>
+            <Text style={styles.emoji}>{emoji}</Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      {mood !== null && (
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitText}>Submit Mood</Text>
-        </TouchableOpacity>
-      )}
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitText}>Submit Mood</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 }
@@ -64,52 +64,66 @@ export default function MoodRatingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#F4F6FA',
+    backgroundColor: '#F0F4FA',
+    paddingHorizontal: 24,
+    paddingTop: 40,
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: '700',
     textAlign: 'center',
-    marginVertical: 20,
+    marginBottom: 30,
+    color: '#34495E',
   },
   label: {
     fontSize: 16,
-    marginVertical: 10,
     fontWeight: '500',
+    color: '#555',
+    marginBottom: 8,
   },
-  pickerContainer: {
+  pickerWrapper: {
     backgroundColor: 'white',
-    borderRadius: 10,
+    borderRadius: 12,
     overflow: 'hidden',
-    marginBottom: 20,
+    marginBottom: 24,
+    elevation: 2,
   },
-  picker: {
+  pickerAndroid: {
     height: 50,
     width: '100%',
   },
   emojiRow: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginVertical: 20,
+    paddingHorizontal: 10,
   },
   emojiButton: {
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: '#E0E0E0',
+    backgroundColor: '#E4E7EB',
+    padding: 12,
+    borderRadius: 50,
+    width: 55,
+    height: 55,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    elevation: 2,
   },
-  selectedEmoji: {
+  emojiSelected: {
     backgroundColor: '#A0C4FF',
+    borderWidth: 2,
+    borderColor: '#4F8EF7',
   },
-  emojiText: {
-    fontSize: 28,
+  emoji: {
+    fontSize: 26,
   },
   submitButton: {
     backgroundColor: '#4F8EF7',
     padding: 14,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: 'center',
     marginTop: 10,
+    elevation: 2,
   },
   submitText: {
     color: 'white',
