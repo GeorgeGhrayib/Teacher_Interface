@@ -10,8 +10,12 @@
   },
   "include": [
     "**/*.js",
-    "**/*.ksx",
+    "**/*.jsx",
     ".expo/types/**/*.js",
-    "expo-env.d.js"
-, "app/index.jsx", "App/index.jsx"  ]
+    "expo-env.d.js",
+    "MyApp/index.jsx",
+    "MyApp/index.jsx",
+    ".expo/types/**/*.ts",
+    "expo-env.d.ts"
+  ]
 }
